@@ -6,6 +6,10 @@ using namespace std;
 map<char, int> spaces = {{'A', 0}, {'B', 1}, {'C', 2}, {'D', 3}, {'E', 4}, 
     {'F', 5}, {'G', 6}, {'H', 7}, {'I', 8}, {'J', 9}};
 
+
+Ship shipsList[4] = {{"Battleship", 4, 0, 0, false, rand() % 2}, {"Cruise", 3, 0, 0, false, rand() % 2}, 
+    {"Destroyer", 2, 0, 0, false, rand() % 2}, {"Boat", 1, 0, 0, false, rand() % 2}};
+
 void ranPopulate(char board[10][10]){
     srand(time(0));
     Ship ships[4] = {{"Battleship", 4, 0, 0, false, rand() % 2}, {"Cruise", 3, 0, 0, false, rand() % 2}, 
@@ -32,7 +36,7 @@ void manPopulate(char board[10][10]){
     bool taken = false;
     string ships[4] = {"Battleship", "Cruise", "Destroyer", "Boat"};
     bool isTaken;
-    for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
         //Error handling. Program accepts only one character
         //Need to add length to ships
         cout << "Place your " + ships[i];
@@ -49,7 +53,7 @@ void manPopulate(char board[10][10]){
         }
 
         board[spaces[toupper(space[0])]][space[1]] = '1';
-
+        string firstSpace = space;
         if(i == 3){
             break;
         }
@@ -67,10 +71,32 @@ void manPopulate(char board[10][10]){
         }
 
         board[spaces[toupper(space[0])]][space[1]] = '1';
+        string endSpace = space;
+        //Loop for length. Need to acess length numbers then establish x and y
+        //Maybe we have first space and last space. Are the first char of each the same? Second character?
+        //Should this be in the loop and we initialize both ends as well???
+        //Flaw found, we need to check these spaces availability. If it is taken then we need to restart the loop and never have initialized start and end
+        if(i == 0){
+            if(firstSpace[0] == endSpace[0]){
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+1] = '1';
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+2] = '1';
+            }else if(firstSpace[1] == endSpace[1]){
+                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]] = '1';
+                board[spaces[toupper(firstSpace[0])]+2][firstSpace[1]] = '1';
+            }
+        }
+
+        if(i = 1){
+            if(firstSpace[0] == endSpace[0]){
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+1] = '1';
+            }else if(firstSpace[1] == endSpace[1]){
+                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]] = '1';
+            }
+        }
         
         endTaken = true;
         }while(!endTaken);
-        
+        taken = true;
     }while(!taken);
 }
 
@@ -84,7 +110,32 @@ void drawOppBoard(char compBoard[10][10]){
             if(compBoard[i][j] == '1'){
                 cout << '~';
             } else{
+                //I think this needs to be removed?
                 cout << compBoard[i][j];
+            }
+            
+        }
+        cout << endl;
+    }
+}
+
+void drawBoard(char compBoard[10][10]){
+    char letter = 'A';
+    cout << "  1 2 3 4 5 6 7 8 9 10\n";
+    for(int i = 0; i < 10; i++){
+        cout << static_cast<char>(letter + i);
+        for(int j = 0; j < 10; j++){
+            cout << ' ';
+            if(compBoard[i][j] == '1'){
+                cout << '1';
+                //Miss
+            } else if(compBoard[i][j] == '2'){
+                cout << 'O';
+                //Hit
+            }else if(compBoard[i][j] == '3'){
+                cout << 'X';
+            }else{
+                cout << '~';
             }
             
         }
