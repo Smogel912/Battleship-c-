@@ -1,58 +1,187 @@
 #include "Battleship.hpp"
-#include "Battleshipfunctions.cpp"
-#include <map>
 #include <iostream>
+#include <map>
 using namespace std;
 
-/*Need:
-    choice to populate board manually or random
-    Using a bot so random is necessary
+map<char, int> spaces = {{'A', 0}, {'B', 1}, {'C', 2}, {'D', 3}, {'E', 4}, 
+    {'F', 5}, {'G', 6}, {'H', 7}, {'I', 8}, {'J', 9}};
 
-    bot will fire random until it hits, then it
-    will choose another direction at random
-    Could use trees for decision tree
 
-    Main menu: 1 to start then that goes to 
-    1 or 2 for manual or random placement
-*/
+Ship shipsList[4] = {{"Battleship", 4, 0, 0, false, rand() % 2}, {"Cruise", 3, 0, 0, false, rand() % 2}, 
+    {"Destroyer", 2, 0, 0, false, rand() % 2}, {"Boat", 1, 0, 0, false, rand() % 2}};
 
-int main(){
-    char gameboard[10][10];
-    char compBoard[10][10];
+void ranPopulate(char board[10][10]){
+    srand(time(0));
+    Ship ships[4] = {{"Battleship", 4, 0, 0, false, rand() % 2}, {"Cruise", 3, 0, 0, false, rand() % 2}, 
+    {"Destroyer", 2, 0, 0, false, rand() % 2}, {"Boat", 1, 0, 0, false, rand() % 2}};
+    for(int i = 0; i < 4; i++){
+
+        //if what then what? How do we prevent the loop from skipping over everything?
+
+        ships[i].x = rand()%11;
+        ships[i].y = rand()%11;
+    }
+
+    //Something like this work it out. x will be random and y will be +3
+    // Ship battle = {"Battleship", 4, hor, vert, false, rand() % 2};
+    // Ship cruise = {"Cruise", 3, hor, vert, false, rand() % 2};
+    // Ship destroy = {"Destroyer", 2, hor, vert, false, rand() % 2};
+    // Ship boat = {"Boat", 1, hor, vert, false, rand() % 2};
+}
+
+void manPopulate(char board[10][10]){
     string space;
-    int turn = 1, shipsAmt = 5, mode;
-
-    for(int i = 0; i < 10; i++){
-        for(int j = 0; j < 10; j++){
-            gameboard[i][j] = '~';
-            compBoard[i][j] = '~';
-        }
-    }
-
-    cout << "**********************\n";
-    cout << "******BATTLESHIP******\n";
-    cout << "**********************\n";
-    cout << "1: Manual\t2:Random\n";
-    cin >> mode;
-
-    do{
-    if(mode == 1){
-        manPopulate(gameboard);
-    } else if(mode == 2){
-        //ranPopulate(gameboard);
-    } else {
-        cout << "Pick 1 or 2";
-    }
-    } while(mode != 1 || mode != 2);
-
-    ranPopulate(compBoard);
-
-    while(shipsAmt != 0){
-        drawOppBoard(compBoard);
-        cout << "\nChoose a space: ";
+    int i = 0;
+    bool endTaken = false;
+    bool taken = false;
+    string ships[4] = {"Battleship", "Cruise", "Destroyer", "Boat"};
+    bool isTaken;
+    for(int j = 0; j < 4; j++){
+        //Error handling. Program accepts only one character
+        //Need to add length to ships
+        cout << "Place your " + ships[i];
+        cout << "\nSpace: ";
         cin >> space;
+        isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
 
-        //Here check if valid spot or if already fired on spot
-        //fire(space);
-    };
+        while(isTaken){
+            cout << "Space taken, choose another\n";
+            cout << "Place your " + ships[i];
+            cout << "\nSpace: ";
+            cin >> space;
+            isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
+        }
+
+        board[spaces[toupper(space[0])]][space[1]] = '1';
+        string firstSpace = space;
+        if(i == 3){
+            break;
+        }
+
+        do{
+        cout << "\nEnd of ship: ";
+        cin >> space;
+        isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
+
+        while(isTaken){
+            cout << "Space taken, choose another\n";
+            cout << "\nEnd of ship: ";
+            cin >> space;
+            isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
+        }
+
+        board[spaces[toupper(space[0])]][space[1]] = '1';
+        string endSpace = space;
+        //Loop for length. Need to acess length numbers then establish x and y
+        //Maybe we have first space and last space. Are the first char of each the same? Second character?
+        //Should this be in the loop and we initialize both ends as well???
+        //Flaw found, we need to check these spaces availability. If it is taken then we need to restart the loop and never have initialized start and end
+        if(i == 0){
+            if(firstSpace[0] == endSpace[0]){
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+1] = '1';
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+2] = '1';
+            }else if(firstSpace[1] == endSpace[1]){
+                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]] = '1';
+                board[spaces[toupper(firstSpace[0])]+2][firstSpace[1]] = '1';
+            }
+        }
+
+        if(i = 1){
+            if(firstSpace[0] == endSpace[0]){
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+1] = '1';
+            }else if(firstSpace[1] == endSpace[1]){
+                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]] = '1';
+            }
+        }
+        
+        endTaken = true;
+        }while(!endTaken);
+        taken = true;
+    }while(!taken);
+}
+
+void drawOppBoard(char compBoard[10][10]){
+    char letter = 'A';
+    cout << "  1 2 3 4 5 6 7 8 9 10\n";
+    for(int i = 0; i < 10; i++){
+        cout << static_cast<char>(letter + i);
+        for(int j = 0; j < 10; j++){
+            cout << ' ';
+            if(compBoard[i][j] == '1'){
+                cout << '~';
+            } else{
+                //I think this needs to be removed?
+                cout << compBoard[i][j];
+            }
+            
+        }
+        cout << endl;
+    }
+}
+
+void drawBoard(char compBoard[10][10]){
+    char letter = 'A';
+    cout << "  1 2 3 4 5 6 7 8 9 10\n";
+    for(int i = 0; i < 10; i++){
+        cout << static_cast<char>(letter + i);
+        for(int j = 0; j < 10; j++){
+            cout << ' ';
+            if(compBoard[i][j] == '1'){
+                cout << '1';
+                //Miss
+            } else if(compBoard[i][j] == '2'){
+                cout << 'O';
+                //Hit
+            }else if(compBoard[i][j] == '3'){
+                cout << 'X';
+            }else{
+                cout << '~';
+            }
+            
+        }
+        cout << endl;
+    }
+}
+
+void fire(string space, char gameboard[10][10]){
+    char r = spaces[toupper(space[0])];
+    int c = space[1];
+    char sym = gameboard[spaces[toupper(space[0])]][space[1]];
+
+    if(sym == '1'){
+        gameboard[r][c] = 'h';
+    } else {
+        gameboard[r][c] = 'm';
+    }
+}
+
+void compTurn(char gameboard[10][10]){
+    srand(time(0));
+    bool invalid = true;
+    do{
+        int hor = rand() % 11;
+
+        //Might have to check if this == hor
+        int vert = rand()%11;
+
+        if(gameboard[vert][hor] == 'h' || gameboard[vert][hor] == 'm'){
+            continue;
+        }
+
+        if(gameboard[vert][hor] == '1'){
+            gameboard[vert][hor] = 'h';
+        } else {
+            gameboard[vert][hor] = 'm';
+        }
+        invalid = false;
+    }while(invalid);
+}
+
+//It'll be like passing an int from main method
+//Computer and player will have their own int
+bool checkWin(int check){
+    if(check == 0){
+        return true;
+    }
+    return false;
 }
