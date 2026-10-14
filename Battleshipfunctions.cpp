@@ -52,7 +52,7 @@ void manPopulate(char board[10][10]){
             isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
         }
 
-        board[spaces[toupper(space[0])]][space[1]] = '1';
+        board[spaces[toupper(space[0])]][space[1]-'1'] = '1';
         string firstSpace = space;
         if(i == 3){
             break;
@@ -70,7 +70,7 @@ void manPopulate(char board[10][10]){
             isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
         }
 
-        board[spaces[toupper(space[0])]][space[1]] = '1';
+        board[spaces[toupper(space[0])]][space[1]-'1'] = '1';
         string endSpace = space;
         //Loop for length. Need to acess length numbers then establish x and y
         //Maybe we have first space and last space. Are the first char of each the same? Second character?
@@ -78,15 +78,15 @@ void manPopulate(char board[10][10]){
         //Flaw found, we need to check these spaces availability. If it is taken then we need to restart the loop and never have initialized start and end
         if(i == 0){
             if(firstSpace[0] == endSpace[0]){
-                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+1] = '1';
-                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+2] = '1';
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]-'1'+1] = '1';
+                board[spaces[toupper(firstSpace[0])]][firstSpace[1]-'1'+2] = '1';
             }else if(firstSpace[1] == endSpace[1]){
-                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]] = '1';
-                board[spaces[toupper(firstSpace[0])]+2][firstSpace[1]] = '1';
+                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]-'1'] = '1';
+                board[spaces[toupper(firstSpace[0])]+2][firstSpace[1]-'1'] = '1';
             }
         }
 
-        if(i = 1){
+        if(i == 1){
             if(firstSpace[0] == endSpace[0]){
                 board[spaces[toupper(firstSpace[0])]][firstSpace[1]+1] = '1';
             }else if(firstSpace[1] == endSpace[1]){
