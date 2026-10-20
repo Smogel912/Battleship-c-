@@ -35,6 +35,7 @@ void manPopulate(char board[10][10]){
     bool endTaken = false;
     bool taken = false;
     string ships[4] = {"Battleship", "Cruise", "Destroyer", "Boat"};
+    int lengths[4] = {4,3,2,1};
     bool isTaken;
     for(int j = 0; j < 4; j++){
         //Error handling. Program accepts only one character
@@ -42,14 +43,14 @@ void manPopulate(char board[10][10]){
         cout << "Place your " + ships[i];
         cout << "\nSpace: ";
         cin >> space;
-        isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
+        isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
 
         while(isTaken){
             cout << "Space taken, choose another\n";
             cout << "Place your " + ships[i];
             cout << "\nSpace: ";
             cin >> space;
-            isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
+            isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
         }
 
         board[spaces[toupper(space[0])]][space[1]-'1'] = '1';
@@ -61,13 +62,13 @@ void manPopulate(char board[10][10]){
         do{
         cout << "\nEnd of ship: ";
         cin >> space;
-        isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
+        isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
 
         while(isTaken){
             cout << "Space taken, choose another\n";
             cout << "\nEnd of ship: ";
             cin >> space;
-            isTaken = board[spaces[toupper(space[0])]][space[1]] == '1';
+            isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
         }
 
         board[spaces[toupper(space[0])]][space[1]-'1'] = '1';
@@ -96,8 +97,8 @@ void manPopulate(char board[10][10]){
         
         endTaken = true;
         }while(!endTaken);
-        taken = true;
-    }while(!taken);
+        i++;
+    }
 }
 
 void drawOppBoard(char compBoard[10][10]){
@@ -128,11 +129,9 @@ void drawBoard(char compBoard[10][10]){
             cout << ' ';
             if(compBoard[i][j] == '1'){
                 cout << '1';
-                //Miss
-            } else if(compBoard[i][j] == '2'){
+            } else if(compBoard[i][j] == 'm'){
                 cout << 'O';
-                //Hit
-            }else if(compBoard[i][j] == '3'){
+            }else if(compBoard[i][j] == 'h'){
                 cout << 'X';
             }else{
                 cout << '~';
@@ -160,8 +159,6 @@ void compTurn(char gameboard[10][10]){
     bool invalid = true;
     do{
         int hor = rand() % 11;
-
-        //Might have to check if this == hor
         int vert = rand()%11;
 
         if(gameboard[vert][hor] == 'h' || gameboard[vert][hor] == 'm'){
