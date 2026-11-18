@@ -30,75 +30,76 @@ void ranPopulate(char board[10][10]){
 }
 
 void manPopulate(char board[10][10]){
-    string space;
-    int i = 0;
-    bool endTaken = false;
-    bool taken = false;
     string ships[4] = {"Battleship", "Cruise", "Destroyer", "Boat"};
     int lengths[4] = {4,3,2,1};
-    bool isTaken;
-    for(int j = 0; j < 4; j++){
-        //Error handling. Program accepts only one character
-        //Need to add length to ships
-        cout << "Place your " + ships[i];
-        cout << "\nSpace: ";
-        cin >> space;
-        isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
+    string space, endSpace;
+    int row, col, endr, endc;
+    bool valid, taken = false;
 
-        while(isTaken){
-            cout << "Space taken, choose another\n";
-            cout << "Place your " + ships[i];
-            cout << "\nSpace: ";
-            cin >> space;
-            isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
-        }
-
-        board[spaces[toupper(space[0])]][space[1]-'1'] = '1';
-        string firstSpace = space;
-        if(i == 3){
-            break;
-        }
-
+    for(int i = 0; i < 4; i++){
         do{
-        cout << "\nEnd of ship: ";
-        cin >> space;
-        isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
-
-        while(isTaken){
-            cout << "Space taken, choose another\n";
-            cout << "\nEnd of ship: ";
+            cout << "Enter a coordinate for your " << ships[i] << " Ex: B5\n";
             cin >> space;
-            isTaken = board[spaces[toupper(space[0])]][space[1]-'1'] == '1';
-        }
 
-        board[spaces[toupper(space[0])]][space[1]-'1'] = '1';
-        string endSpace = space;
-        //Loop for length. Need to acess length numbers then establish x and y
-        //Maybe we have first space and last space. Are the first char of each the same? Second character?
-        //Should this be in the loop and we initialize both ends as well???
-        //Flaw found, we need to check these spaces availability. If it is taken then we need to restart the loop and never have initialized start and end
-        if(i == 0){
-            if(firstSpace[0] == endSpace[0]){
-                board[spaces[toupper(firstSpace[0])]][firstSpace[1]-'1'+1] = '1';
-                board[spaces[toupper(firstSpace[0])]][firstSpace[1]-'1'+2] = '1';
-            }else if(firstSpace[1] == endSpace[1]){
-                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]-'1'] = '1';
-                board[spaces[toupper(firstSpace[0])]+2][firstSpace[1]-'1'] = '1';
+            if(space.length() != 2){
+                cout << "\nInput must be a letter and a number\n";
+                continue;
             }
-        }
 
-        if(i == 1){
-            if(firstSpace[0] == endSpace[0]){
-                board[spaces[toupper(firstSpace[0])]][firstSpace[1]+1] = '1';
-            }else if(firstSpace[1] == endSpace[1]){
-                board[spaces[toupper(firstSpace[0])]+1][firstSpace[1]] = '1';
+            row = spaces[toupper(space[0])];
+            col = space[1]-'1';
+
+            if(col < 0 || col > 9 || row < 0 || row > 9){
+                cout << "\nInvalid space\n";
+                continue;
             }
-        }
-        
-        endTaken = true;
-        }while(!endTaken);
-        i++;
+
+            if(board[row][col] == 1){
+                cout << "space taken";
+                continue;
+            }
+
+            if(i == 3){
+                board[row][col] = '1';
+                break;
+            }
+
+            cout << "Choose end coordinate: ";
+            cin >> endSpace;
+
+            endr = spaces[toupper(endSpace[0])];
+            endc = endSpace[1]-'1';
+
+            if(board[endr][endc] == 1){
+                cout << "space taken";
+                continue;
+            }
+
+            for(int j = 0; j < lengths[i]; j++){
+                if(board[row][col+j] == '1'){
+                    cout << "space taken";
+                    taken = true;
+                }
+                if(board[row+j][col] == '1'){
+                    cout << "space taken";
+                    taken = true;
+                }
+            }
+
+            if(taken == false){
+                for(int j = 0; j < lengths[i]; j++){
+                    if(row == endr){
+                        board[row][col+j] = '1';
+                    }
+                    if(col == endc){
+                        board[row+j][col] = '1';
+                    }
+                }
+                valid = true;
+            }
+        }while(!valid);
     }
+
 }
 
 void drawOppBoard(char compBoard[10][10]){
